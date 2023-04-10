@@ -7,15 +7,21 @@ function App() {
   const [search, setSearch] = useState('');
   const [data, setData] = useState('');
   const { TextArea } = Input;
+  const [loading, setLoading] = useState(false);
   const fetchData = async () => {
     try {
+      setLoading(true);
       await axios
         .post('https://uniswap-contract-checker.herokuapp.com/', {
-          filterName: 'Artemis',
+          filterName: search,
         })
-        .then((respose) => setData(respose));
+        .then((respose) => {
+          setData(JSON.stringify(respose.data, null, 4));
+          setLoading(false);
+        });
     } catch (err) {
       console.log('err', err);
+      setLoading(false);
     }
   };
   return (
@@ -32,6 +38,7 @@ function App() {
           onClick={() => {
             fetchData();
           }}
+          loading={loading}
         >
           Check
         </Button>
